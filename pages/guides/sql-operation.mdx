@@ -1,0 +1,40 @@
+# SQL Operation
+
+To prevent SQL injection, use the drivers and hooks provided by Waffle.
+
+import { Callout } from 'nextra/components'
+
+<Callout type="warning" emoji="⚠️">
+    Currently, only `database/sql` is supported.
+</Callout>
+
+## When using `database/sql`
+
+To prevent SQL injection, use the `waffle-go/contrib/database/sql` package.  
+The context must pass through the Waffle HTTP server middleware.
+
+```go
+import (
+    ...
+    waffleSQL "github.com/sitebatch/waffle-go/contrib/database/sql"
+    ...
+)
+
+driverName, err := waffleSQL.Register("sqlite3")
+if err != nil {
+    panic(err)
+}
+
+db, err := sql.Open(driverName, "file::memory:?cache=shared")
+if err != nil {
+    panic(err)
+}
+
+// ⚠️ Insecure query
+_, err := db.QueryContext(
+    ctx,
+    fmt.Sprintf(
+        "SELECT * FROM users WHERE email = '%s' AND password = '%s';", email, password,
+    )
+)
+```

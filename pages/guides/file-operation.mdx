@@ -1,0 +1,27 @@
+# File Operation
+
+To prevent directory traversal and access to sensitive files, use the wrapper functions provided by Waffle.
+
+## When using `os`
+
+If you are using the `os` package to perform file operations, replace it with the `waffle-go/contrib/os` package.
+
+import { Callout } from 'nextra/components'
+
+<Callout type="warning" emoji="⚠️">
+    Currently, only `os.ReadFile` is supported.
+</Callout>
+
+```go
+import (
+    ...
+    "os"
+    waffleOs "github.com/sitebatch/waffle-go/contrib/os"
+    ...
+)
+
+func someReadFileFunc() {
+    // insted of os.ReadFile
+    waffleOs.ProtectReadFile(path)
+}
+```

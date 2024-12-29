@@ -1,0 +1,152 @@
+# Getting Started
+
+# Example application
+
+The following examples use a web application built with standard libraries. However, you don't need to be using these libraries specifically - Waffle can be used with other libraries such as Gin and GORM.  
+For a complete list of supported libraries, please refer to the [`contrib`](https://github.com/sitebatch/waffle-go/tree/main/contrib) directory in the repository.
+
+### Protecting HTTP server
+
+To protect an HTTP server built with `net/http`, you simply need to add the Waffle middleware.
+
+```go
+package main
+
+import (
+	"net/http"
+
+	"github.com/mrtc0/waffle"
+	waffleHttp "github.com/mrtc0/waffle/contrib/net/http"
+)
+
+func main() {
+    // Start Waffle with debug mode enabled
+	opt := waffle.StartOptions(func(c *waffle.Config) {
+		c.Debug = true
+	})
+	waffle.Start(opt)
+
+	srv := &http.Server{
+		Addr:    ":8000",
+		Handler: newHTTPHandler(),
+	}
+
+	srv.ListenAndServe()
+}
+
+func ping(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("pong"))
+}
+
+func newHTTPHandler() http.Handler {
+	mux := http.NewServeMux()
+	mux.Handle("/ping", http.HandlerFunc(ping))
+
+    // Add Waffle middleware
+	handler := waffleHttp.WafMiddleware(mux)
+	return handler
+}
+```
+
+To verify that the attack request is blocked, run the following command.
+
+```shell
+$ go run main.go
+
+# Access the server
+$ curl http://localhost:8000/ping
+HTTP/1.1 200 OK
+Date: Thu, 26 Dec 2024 12:49:41 GMT
+Content-Length: 4
+Content-Type: text/plain; charset=utf-8
+
+pong
+
+# Attack the server
+$ curl "http://localhost:8000/ping?path=../../../../etc/passwd"
+HTTP/1.1 403 Forbidden
+Date: Thu, 26 Dec 2024 12:49:32 GMT
+Content-Length: 0
+```
+
+While attacks are successfully blocked, detecting them at points other than the file opening operation (which is the sink for directory traversal) can lead to false positives.  
+To address this, Waffle can "more accurately" prevent attacks by propagating context. This context-aware approach helps reduce false positives while maintaining effective protection.
+
+```go
+package main
+
+import (
+	"net/http"
+
+	"github.com/mrtc0/waffle"
+	waffleHttp "github.com/mrtc0/waffle/contrib/net/http"
+	waffleOs "github.com/mrtc0/waffle/contrib/os"
+)
+
+func main() {
+	opt := waffle.StartOptions(func(c *waffle.Config) {
+		c.Debug = true
+	})
+	waffle.Start(opt)
+
+	srv := &http.Server{
+		Addr:    ":8000",
+		Handler: newHTTPHandler(),
+	}
+
+	srv.ListenAndServe()
+}
+
+func ping(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("pong"))
+}
+
+func readFile(w http.ResponseWriter, r *http.Request) {
+	path := r.URL.Query().Get("file")
+
+    // Protect the file read operation
+	// if _, err := os.ReadFile(path); err != nil {
+	if _, err := waffleOs.ProtectReadFile(r.Context(), path); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Write([]byte("file read"))
+}
+
+func newHTTPHandler() http.Handler {
+	mux := http.NewServeMux()
+	mux.Handle("/ping", http.HandlerFunc(ping))
+	mux.Handle("/get-file", http.HandlerFunc(readFile))
+
+	handler := waffleHttp.WafMiddleware(mux)
+	return handler
+}
+```
+
+To verify that the attack request is blocked, run the following command.
+
+```shell
+$ curl -i 'http://localhost:8000/get-file?file=main.go'
+HTTP/1.1 200 OK
+Date: Thu, 26 Dec 2024 14:19:34 GMT
+Content-Length: 9
+Content-Type: text/plain; charset=utf-8
+
+file read⏎
+
+$ curl -i 'http://localhost:8000/get-file?file=/etc/hosts'
+HTTP/1.1 500 Internal Server Error
+Content-Type: text/plain; charset=utf-8
+X-Content-Type-Options: nosniff
+Date: Thu, 26 Dec 2024 14:19:35 GMT
+Content-Length: 23
+
+file operation blocked
+```
+
+Waffle also provides features to prevent attacks such as SQL injection, SSRF and more.
+
+# Next Steps
+
+For more information about protect your application, refer the [guides](/guides/http-server).

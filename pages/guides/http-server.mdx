@@ -1,0 +1,27 @@
+# HTTP Server
+
+Waffle provides Middleware to embed Waffle in your application.  
+You need to call `waffle.Start()` at any timing, such as application initialization.
+
+```go
+import (
+    ...
+  	"github.com/sitebatch/waffle-go"
+    waffleHttp "github.com/sitebatch/waffle-go/contrib/net/http"
+    ...
+)
+
+func main() {
+    waffle.Start()
+    ...
+    srv.ListenAndServe()
+}
+
+func yourHTTPHandler() http.Handler {
+	mux := http.NewServeMux()
+	mux.Handle("/", http.HandlerFunc(yourSomeHandlerFunc))
+
+	handler := waffleHttp.WafMiddleware(mux)
+	return handler
+}
+```

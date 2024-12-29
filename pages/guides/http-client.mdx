@@ -1,0 +1,23 @@
+# HTTP Client
+
+When sending a request from your application to another service, you can prevent attacks such as SSRF by using Waffle.
+
+## When using `net/http`
+
+To prevent attacks such as SSRF, use the `waffle-go/contrib/net/http` package.
+
+```go
+import (
+    ...
+    "net/http"
+    waffleHttp "github.com/sitebatch/waffle-go/contrib/net/http"
+    ...
+)
+
+func doRequest() {
+    ...
+	c := waffleHttp.WrapClient(http.DefaultClient)
+	req, _ := http.NewRequestWithContext(ctx, "GET", "http://169.254.169.254/", nil)
+    ...
+}
+```
