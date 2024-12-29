@@ -5,6 +5,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  basePath: '/waffle-website'
 }
 
 const withNextra = nextra({
