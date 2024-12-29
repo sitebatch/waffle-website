@@ -6,11 +6,6 @@ To prevent directory traversal and access to sensitive files, use the wrapper fu
 
 If you are using the `os` package to perform file operations, replace it with the `waffle-go/contrib/os` package.
 
-import { Callout } from 'nextra/components'
-
-<Callout type="warning" emoji="⚠️">
-    Currently, only `os.ReadFile` is supported.
-</Callout>
 
 ```go
 import (
@@ -25,3 +20,5 @@ func someReadFileFunc() {
     waffleOs.ProtectReadFile(path)
 }
 ```
+
+More information can be found in the [`contrib/os`](https://github.com/sitebatch/waffle-go/tree/main/contrib/os).

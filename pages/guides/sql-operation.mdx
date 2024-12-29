@@ -6,6 +6,7 @@ import { Callout } from 'nextra/components'
 
 <Callout type="warning" emoji="⚠️">
     Currently, only `database/sql` is supported.
+    We are planning to support other database libraries such as GORM.
 </Callout>
 
 ## When using `database/sql`
@@ -17,24 +18,14 @@ The context must pass through the Waffle HTTP server middleware.
 import (
     ...
     waffleSQL "github.com/sitebatch/waffle-go/contrib/database/sql"
+    _ "github.com/mattn/go-sqlite3" // or any other database driver
     ...
 )
 
-driverName, err := waffleSQL.Register("sqlite3")
+db, err := waffleSQL.Open("sqlite3", "file::memory:?cache=shared")
 if err != nil {
     panic(err)
 }
-
-db, err := sql.Open(driverName, "file::memory:?cache=shared")
-if err != nil {
-    panic(err)
-}
-
-// ⚠️ Insecure query
-_, err := db.QueryContext(
-    ctx,
-    fmt.Sprintf(
-        "SELECT * FROM users WHERE email = '%s' AND password = '%s';", email, password,
-    )
-)
 ```
+
+More information can be found in the [`contrib/databse/sql`](https://github.com/sitebatch/waffle-go/tree/main/contrib/database/sql).
