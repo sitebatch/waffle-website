@@ -2,8 +2,21 @@
 
 Waffle provides a protection layer for application-specific processing. It can detect malicious login attempts such as credential stuffing and abnormal payment requests.
 
-import { Callout } from 'nextra/components'
- 
-<Callout type="warning" emoji="⚠️">
-    This feature is currently under development.
-</Callout>
+```go
+// Example:
+
+import (
+    "github.com/sitebatch/waffle-go/contrib/application"
+)
+
+// Apply rate limiting based on client IP and user ID key to
+// detect attacks such as credential stuffing
+if err := application.ProtectAccountTakeover(ctx, clientIP, email); err != nil {
+    return err
+}
+
+err := login(ctx, email, password)
+if err != nil {
+    return err
+}
+```

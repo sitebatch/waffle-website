@@ -1,0 +1,35 @@
+# Business Logic
+
+Waffle provides a protection layer for application-specific processing. It can detect malicious login attempts such as credential stuffing and abnormal payment requests.
+
+import { Callout } from 'nextra/components'
+
+<Callout type="warning" emoji="⚠">
+    Currently, does not supported user-defined detection logic, but we are planning to support it.
+</Callout>
+
+## User Logins
+
+If your application provides authentication, you may want to protect against account takeovers such as credential stuffing and brute force attacks.  
+By using Waffle's Account Takeover protection feature, you can apply rate limiting based on client IP and user ID keys to detect these attacks.
+
+<Callout type="warning" emoji="⚠">
+Currently, this feature uses in-memory rate limiting, so it may not be properly applied in distributed systems. However, it should be sufficient for detecting credential stuffing.
+</Callout>
+
+```go
+import (
+    "github.com/sitebatch/waffle-go/contrib/application"
+)
+
+// Apply rate limiting based on client IP and user ID key to
+// detect attacks such as credential stuffing
+if err := application.ProtectAccountTakeover(ctx, clientIP, email); err != nil {
+    return err
+}
+
+err := login(ctx, email, password)
+if err != nil {
+    return err
+}
+```
