@@ -1,0 +1,27 @@
+# Customizing Rules
+
+If you want to change the rules of Waffle, you can override the default rules.
+
+## 1. Dump default rules
+
+Default rules can be output with the `waffle dump-default-rules` command.
+
+```shell
+$ waffle dump-default-rules
+```
+
+## 2. Override default rules
+
+You can load your custom rules using the `WithOverrideRules()` method.
+
+```go
+//go:embed custom-rules.json
+var rulesJSON []byte
+
+func main() {
+	waffle.Start(waffle.WithDebug(), waffle.WithOverrideRules(rulesJSON))
+    ...
+}
+```
+
+See example code in the [`example/override-rules` directory](https://github.com/sitebatch/waffle-go/tree/main/example/override-rules)

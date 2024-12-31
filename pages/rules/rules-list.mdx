@@ -1,0 +1,18 @@
+# Default Rules
+
+Waffle provides default rules to detect attacks without tuning the rules.  
+Rules are continuously updated and contributions are welcome.
+
+## Default Rules List
+
+| Rule | Description | Action |
+| :----- | :---- | :---- |
+| Detects a known security scanner |  Detects known security scanners (Nessus, sqlmap, etc)   | Monitor |
+| Directory Traversal attempts | Detects directory traversal attempts | Monitor |
+| XSS attempts | Detects XSS attempts | Monitor |
+| Sensitive file enumeration | Detects sensitive file enumeration attempts | Monitor |
+| SQL Injection attempts | Detects SQL Injection attempts | Monitor |
+| SQL Injection exploited | Exploited SQL Injection | Block |
+| Sensitive file opened | Detects sensitive file opened | Block |
+| SSRF exploited | Exploited SSRF | Block |
+| Account Takeover detected | Detects account takeover attempts | Block |
