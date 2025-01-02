@@ -3,11 +3,14 @@
 Waffle provides Middleware to embed Waffle in your application.  
 You need to call `waffle.Start()` at any timing, such as application initialization.
 
+## When using `net/http`
+
 ```go
 import (
     ...
   	"github.com/sitebatch/waffle-go"
     waffleHttp "github.com/sitebatch/waffle-go/contrib/net/http"
+    waffleGin "github.com/sitebatch/waffle-go/contrib/gin-gonic/gin"
     ...
 )
 
@@ -23,5 +26,19 @@ func yourHTTPHandler() http.Handler {
 
 	handler := waffleHttp.WafMiddleware(mux)
 	return handler
+}
+```
+
+## When using `gin`
+
+```go
+func main() {
+	r := gin.Default()
+
+  ...
+	r.Use(waffleGin.WafMiddleware())
+	waffle.Start(waffle.WithDebug())
+  ...
+  r.Run(":8080")
 }
 ```

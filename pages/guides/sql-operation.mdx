@@ -2,13 +2,6 @@
 
 To prevent SQL injection, use the drivers and hooks provided by Waffle.
 
-import { Callout } from 'nextra/components'
-
-<Callout type="warning" emoji="⚠️">
-    Currently, only `database/sql` is supported.
-    We are planning to support other database libraries such as GORM.
-</Callout>
-
 ## When using `database/sql`
 
 To prevent SQL injection, use the `waffle-go/contrib/database/sql` package.  
@@ -29,3 +22,22 @@ if err != nil {
 ```
 
 More information can be found in the [`contrib/databse/sql`](https://github.com/sitebatch/waffle-go/tree/main/contrib/database/sql).
+
+## When using GORM
+
+GORM v2 is supported by Waffle.
+
+```go
+import (
+	waffleSql "github.com/sitebatch/waffle-go/contrib/database/sql"
+	"gorm.io/driver/sqlite"
+)
+
+_, err := waffleSql.Register(sqlite.DriverName)
+sqlDB, err := waffleSql.Open(sqlite.DriverName, dsn)
+db, err := gorm.Open(sqlite.New(sqlite.Config{Conn: sqlDB}), &gorm.Config{})
+
+result := db.WithContext(ctx).Where(fmt.Sprintf("code = '%s'", "D42') OR 1=1--")).First(&product)
+```
+
+More information can be found in the [`contrib/gorm.io/gorm`](https://github.com/sitebatch/waffle-go/tree/main/contrib/gorm.io/gorm).
