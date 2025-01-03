@@ -17,6 +17,7 @@ import (
 func doRequest() {
     ...
 	c := waffleHttp.WrapClient(http.DefaultClient)
+    // ctx MUST be a context propagated from Waffle HTTP server middleware such as WafMiddleware
 	req, _ := http.NewRequestWithContext(ctx, "GET", "http://169.254.169.254/", nil)
     ...
 }

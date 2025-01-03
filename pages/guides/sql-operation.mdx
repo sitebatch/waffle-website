@@ -19,6 +19,9 @@ db, err := waffleSQL.Open("sqlite3", "file::memory:?cache=shared")
 if err != nil {
     panic(err)
 }
+
+// ctx MUST be a context propagated from Waffle HTTP server middleware such as WafMiddleware
+db.QueryContext(ctx, query)
 ```
 
 More information can be found in the [`contrib/databse/sql`](https://github.com/sitebatch/waffle-go/tree/main/contrib/database/sql).

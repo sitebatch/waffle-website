@@ -17,7 +17,8 @@ import (
 
 func someReadFileFunc() {
     // insted of os.ReadFile
-    waffleOs.ProtectReadFile(path)
+    // ctx MUST be a context propagated from Waffle HTTP server middleware such as WafMiddleware
+    waffleOs.ProtectReadFile(ctx, path)
 }
 ```
 

@@ -24,6 +24,7 @@ import (
 
 // Apply rate limiting based on client IP and user ID key to
 // detect attacks such as credential stuffing
+// ctx MUST be a context propagated from Waffle HTTP server middleware such as WafMiddleware
 if err := application.ProtectAccountTakeover(ctx, clientIP, email); err != nil {
     return err
 }
