@@ -19,16 +19,13 @@ package main
 import (
 	"net/http"
 
-	"github.com/mrtc0/waffle"
-	waffleHttp "github.com/mrtc0/waffle/contrib/net/http"
+	"github.com/sitebatch/waffle-go"
+	waffleHttp "github.com/sitebatch/waffle-go/contrib/net/http"
 )
 
 func main() {
-    // Start Waffle with debug mode enabled
-	opt := waffle.StartOptions(func(c *waffle.Config) {
-		c.Debug = true
-	})
-	waffle.Start(opt)
+	// Start waffle with debug mode
+    waffle.Start(waffle.WithDebug())
 
 	srv := &http.Server{
 		Addr:    ":8000",
@@ -95,16 +92,14 @@ package main
 import (
 	"net/http"
 
-	"github.com/mrtc0/waffle"
-	waffleHttp "github.com/mrtc0/waffle/contrib/net/http"
-	waffleOs "github.com/mrtc0/waffle/contrib/os"
+	"github.com/sitebatch/waffle-go"
+	waffleHttp "github.com/sitebatch/waffle-go/contrib/net/http"
+	waffleOs "github.com/sitebatch/waffle-go/contrib/os"
 )
 
 func main() {
-	opt := waffle.StartOptions(func(c *waffle.Config) {
-		c.Debug = true
-	})
-	waffle.Start(opt)
+	// Start waffle with debug mode
+    waffle.Start(waffle.WithDebug())
 
 	srv := &http.Server{
 		Addr:    ":8000",
